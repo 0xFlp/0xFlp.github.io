@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <!-- Fundo degradê escuro -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#333333"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#bgGradient)"/>
+
+  <!-- Efeito de "papel binário" em vermelho -->
+  <pattern id="binaryPattern" patternUnits="userSpaceOnUse" width="20" height="20">
+    <text x="0" y="15" font-family="monospace" font-size="12" fill="#ff0000">0101010101</text>
+  </pattern>
+  <rect width="1200" height="400" fill="url(#binaryPattern)" opacity="0.15"/>
+
+  <!-- Ícone centralizado -->
+  <g transform="translate(600,200) scale(1.5)">
+    <path fill="#ffcc00" d="M249.429,214.144c-3.968-1.685-8.576-0.747-11.627,2.304l-21.333,21.333c-4.16,4.16-4.16,10.923,0,15.083 
+      c4.16,4.16,10.923,4.16,15.083,0l3.115-3.115V288c0,5.888,4.779,10.667,10.667,10.667S256,293.888,256.021,288v-64 
+      C256.021,219.691,253.419,215.787,249.429,214.144z"/>
+    <path fill="#ffcc00" d="M313.429,214.144c-3.947-1.685-8.576-0.747-11.627,2.304l-21.333,21.333c-4.16,4.16-4.16,10.923,0,15.083 
+      c4.16,4.16,10.923,4.16,15.083,0l3.115-3.115V288c0,5.888,4.779,10.667,10.667,10.667S320,293.888,320.021,288v-64 
+      C320.021,219.691,317.419,215.787,313.429,214.144z"/>
+    <path fill="#ffcc00" d="M377.429,214.144c-3.968-1.685-8.555-0.747-11.627,2.304l-21.333,21.333c-4.16,4.16-4.16,10.923,0,15.083 
+      c4.16,4.16,10.923,4.16,15.083,0l3.115-3.115V288c0,5.888,4.779,10.667,10.667,10.667c5.888,0,10.667-4.779,10.688-10.667v-64 
+      C384.021,219.691,381.419,215.787,377.429,214.144z"/>
+  </g>
+</svg>

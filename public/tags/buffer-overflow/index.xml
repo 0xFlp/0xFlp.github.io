@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Buffer Overflow on 0xFl Website</title>
+    <link>https://0xFlp.github.io/tags/buffer-overflow/</link>
+    <description>Recent content from 0xFl Website</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    
+    <managingEditor>xxx@example.com (0xFl)</managingEditor>
+    <webMaster>xxx@example.com (0xFl)</webMaster>
+    
+    <copyright>All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!</copyright>
+    
+    <lastBuildDate>Fri, 12 Sep 2025 12:00:00 +0000</lastBuildDate>
+    
+    
+    <atom:link href="https://0xFlp.github.io/tags/buffer-overflow/index.xml" rel="self" type="application/rss&#43;xml" />
+    
+
+    
+    
+
+    <item>
+      <title>Space – HTB Challenge</title>
+      <link>https://0xFlp.github.io/post/space/</link>
+      <pubDate>Fri, 12 Sep 2025 12:00:00 &#43;0000</pubDate>
+      <author>xxx@example.com (0xFl)</author>
+      <guid>https://0xFlp.github.io/post/space/</guid>
+      <description>
+        <![CDATA[<h1>Space – HTB Challenge</h1><p>Author: 0xFl(xxx@example.com)</p>
+        
+          <h2 id="challenge-description">
+<a class="header-anchor" href="#challenge-description"></a>
+Challenge Description
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">roaming in a small space
+</span></span></code></pre></div><p>This challenge is a classic <strong>shellcode injection</strong> on a 32-bit binary with minimal protections. The main constraint is the <strong>very limited space available</strong> for our attack.</p>
+<hr>
+<h3 id="initial-recon">
+<a class="header-anchor" href="#initial-recon"></a>
+Initial Recon
+</h3><p>Checking the file:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">$ file space
+</span></span><span class="line"><span class="cl">space: ELF 32-bit LSB executable, Intel i386, dynamically linked, not stripped
+</span></span><span class="line"><span class="cl">$ checksec space
+</span></span><span class="line"><span class="cl">Arch:       i386-32-little
+</span></span><span class="line"><span class="cl">RELRO:      No RELRO
+</span></span><span class="line"><span class="cl">Stack:      No canary found
+</span></span><span class="line"><span class="cl">NX:         NX unknown - GNU_STACK missing
+</span></span><span class="line"><span class="cl">PIE:        No PIE <span class="o">(</span>0x8048000<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Stack:      Executable
+</span></span><span class="line"><span class="cl">RWX:        Has RWX segments
+</span></span><span class="line"><span class="cl">Stripped:   No
+</span></span></code></pre></div><ul>
+<li><strong>32-bit ELF</strong></li>
+<li><strong>No NX / Stack Executable</strong></li>
+<li><strong>Not PIE</strong></li>
+<li><strong>RWX segment available</strong></li>
+<li><strong>No stack canary</strong></li>
+</ul>
+<p>This makes it suitable for a <strong>direct shellcode injection</strong>.</p>
+        
+        <hr><p>Published on 2025-09-12 at <a href='https://0xFlp.github.io/'>0xFl Website</a>, last modified on 2025-09-12</p>]]>
+      </description>
+      
+        <category>HTB</category>
+      
+    </item>
+    
+    
+
+    <item>
+      <title>Idek CTF - MySpace2 PWN Writeup</title>
+      <link>https://0xFlp.github.io/post/myspace2/</link>
+      <pubDate>Fri, 12 Sep 2025 00:00:00 &#43;0000</pubDate>
+      <author>xxx@example.com (0xFl)</author>
+      <guid>https://0xFlp.github.io/post/myspace2/</guid>
+      <description>
+        <![CDATA[<h1>Idek CTF - MySpace2 PWN Writeup</h1><p>Author: 0xFl(xxx@example.com)</p>
+        
+          <h1 id="myspace2---idek-ctf">
+<a class="header-anchor" href="#myspace2---idek-ctf"></a>
+MySpace2 - Idek CTF
+</h1><h2 id="challenge-description">
+<a class="header-anchor" href="#challenge-description"></a>
+Challenge Description
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">I miss MySpace. Ranking my friends publicly is goated. I decided to bring it back, with new security 
+</span></span><span class="line"><span class="cl">features so we can all win!
+</span></span></code></pre></div><p>This binary is a 64-bit ELF executable with the following protections:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">➜  checksec myspace2
+</span></span><span class="line"><span class="cl">Arch:       amd64-64-little
+</span></span><span class="line"><span class="cl">RELRO:      Partial RELRO
+</span></span><span class="line"><span class="cl">Stack:      Canary found
+</span></span><span class="line"><span class="cl">NX:         NX unknown - GNU_STACK missing
+</span></span><span class="line"><span class="cl">PIE:        No PIE <span class="o">(</span>0x400000<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Stripped:   No
+</span></span><span class="line"><span class="cl">Debuginfo:  Yes
+</span></span></code></pre></div><p>We can see that <strong>PIE is disabled</strong>, the stack has a <strong>canary</strong>, and NX appears to be missing.</p>
+        
+        <hr><p>Published on 2025-09-12 at <a href='https://0xFlp.github.io/'>0xFl Website</a>, last modified on 2025-09-12</p>]]>
+      </description>
+      
+        <category>IdekCtf</category>
+      
+    </item>
+    
+  </channel>
+</rss>

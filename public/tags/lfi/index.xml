@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lfi on 0xFl Website</title>
+    <link>https://0xFlp.github.io/tags/lfi/</link>
+    <description>Recent content from 0xFl Website</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    
+    <managingEditor>xxx@example.com (0xFl)</managingEditor>
+    <webMaster>xxx@example.com (0xFl)</webMaster>
+    
+    <copyright>All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!</copyright>
+    
+    <lastBuildDate>Fri, 12 Sep 2025 00:00:00 +0000</lastBuildDate>
+    
+    
+    <atom:link href="https://0xFlp.github.io/tags/lfi/index.xml" rel="self" type="application/rss&#43;xml" />
+    
+
+    
+    
+
+    <item>
+      <title>Sekai CTF - My-Flask-App WEB Writeup</title>
+      <link>https://0xFlp.github.io/post/myflaskapp/</link>
+      <pubDate>Fri, 12 Sep 2025 00:00:00 &#43;0000</pubDate>
+      <author>xxx@example.com (0xFl)</author>
+      <guid>https://0xFlp.github.io/post/myflaskapp/</guid>
+      <description>
+        <![CDATA[<h1>Sekai CTF - My-Flask-App WEB Writeup</h1><p>Author: 0xFl(xxx@example.com)</p>
+        
+          <h1 id="my-flask-app---sekai-ctf">
+<a class="header-anchor" href="#my-flask-app---sekai-ctf"></a>
+My-Flask-App - Sekai Ctf
+</h1><h2 id="challenge-description">
+<a class="header-anchor" href="#challenge-description"></a>
+Challenge Description
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">I created a Web application in Flask, what could be wrong?
+</span></span></code></pre></div><p>After setting up the files, a few interesting things became apparent. First, there is a <strong>Dockerfile</strong> that references the flag:</p>
+<figure><img src="/images/posts_images/sekaictf/img/myflaskapp/image1.png">
+</figure>
+
+<p>It seems that the flag is generated as a <strong>32-character string</strong>.</p>
+<p>Looking into <code>app.py</code>:</p>
+<figure><img src="/images/posts_images/sekaictf/img/myflaskapp/image2.png">
+</figure>
+
+<p>We can clearly see a <strong>Local File Inclusion (LFI)</strong> vulnerability in the <code>View</code> route.</p>
+        
+        <hr><p>Published on 2025-09-12 at <a href='https://0xFlp.github.io/'>0xFl Website</a>, last modified on 2025-09-12</p>]]>
+      </description>
+      
+        <category>SekaiCtf</category>
+      
+    </item>
+    
+  </channel>
+</rss>

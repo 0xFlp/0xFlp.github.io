@@ -1,0 +1,12 @@
+baseURL = 'https://0xFlp.github.io/'
+languageCode = 'en-us'
+title = '0xFl Website'
+theme = "reimu"
+
+[markup.highlight]
+guessSyntax = true
+noClasses = false
+
+[caches]
+  [caches.images]
+    dir = ":cacheDir/images"
