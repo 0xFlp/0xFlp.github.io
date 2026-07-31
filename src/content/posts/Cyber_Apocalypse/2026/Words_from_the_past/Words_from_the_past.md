@@ -274,8 +274,16 @@ This time the mmap is placed close to libc (distance depends on `PID & 7`, a val
 
 The key detail is that `DAT_00105030` was already set to 1 during the first iteration, so re-entering `main` skips the `if` branch and runs the `else` instead. The fork guard (`DAT_0010502c`) is likewise already set, so no second fork happens. That means a single CALL back into `main` is enough to reach the libc-relative mmap path.
 
-To reach the second iteration, the first CALL must redirect execution back to `main`. Since `0xe8` is a `CALL rel32` (relative to RIP), we need to calculate the offset from the mmap region back to main. 
-The anti-debug checks only fire once execution reaches them, so patching wasn't needed: run the binary in pwndbg, Ctrl+C during read(), and vmmap shows the RWX page (0x555555565000 rwxp) right away.
+To reach the second iteration, the first CALL must redirect execution back to `main`. Since `0xe8` is a `CALL rel32` (relative to RIP), we need to calculate the offset from the mmap region back to `main`. 
+To grab the mmap address, I used `vmmap` in pwndbg before sending any input. The RWX page is already mapped by then, and the anti-debug checks haven't fired yet.
+
+```
+pwndbg> vmmap
+    [...]
+    0x555555565000     0x555555566000 rwxp     1000      0 [anon_555555565]
+    [...]
+```
+
 
 ```
 pwndbg> p/x 0x555555565000 - 0x5555555556d6
