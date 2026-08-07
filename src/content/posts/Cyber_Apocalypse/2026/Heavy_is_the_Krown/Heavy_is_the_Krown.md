@@ -1,6 +1,6 @@
 ---
 title: "Heavy is the Krown - HTB CA2026 Pwn (Insane)"
-published: 2026-07-29
+published: 2026-07-30
 tags: [pwn, kernel, UAF, pipe-buffer, modprobe-path, data-only]
 category: Cyber_Apocalypse2026
 ---
